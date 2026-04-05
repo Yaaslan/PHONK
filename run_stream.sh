@@ -6,7 +6,7 @@ RTMP_URL="rtmp://a.rtmp.youtube.com/live2/$STREAM_KEY"
 BANNER_PATH="reklam.png"
 
 # LİNKLERİNİ BURAYA EKLE (Arada birer boşluk bırakarak)
-URLS=("BURAYA_BIRINCI_LINKI_YAPISTIR" "BURAYA_IKINCI_LINKI_YAPISTIR")
+URLS=("https://youtu.be/f_mGxEdvvLA?si=2MiVBeP0VVlxoOfF" "https://youtu.be/NY5DgRqfBCU?si=AYIsdqLB29DVbvIT")
 
 while true; do
   for URL in "${URLS[@]}"; do
