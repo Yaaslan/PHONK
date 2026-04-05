@@ -1,23 +1,39 @@
 #!/bin/bash
 
-# Dosyadan linkleri oku
-readarray -t URLS < playlist.txt
 STREAM_KEY=$1
 RTMP_URL="rtmp://a.rtmp.youtube.com/live2/$STREAM_KEY"
+BANNER_PATH="reklam.png"
 
+# Sonsuz döngü
 while true; do
-  for URL in "${URLS[@]}"; do
+  # playlist.txt içindeki her satırı temizleyerek oku
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    # Satır sonundaki gizli karakterleri (\r) temizle ve boşlukları at
+    URL=$(echo "$line" | tr -d '\r' | xargs)
+
+    # Eğer satır boşsa atla
+    if [ -z "$URL" ]; then
+      continue
+    fi
+
     echo "Oynatılıyor: $URL"
     
-    # yt-dlp ile videonun ham linkini yakala
+    # yt-dlp ile linki al
     VIDEO_RAW=$(yt-dlp -f "best[ext=mp4]" -g "$URL")
-    
-    # FFmpeg: Banner 120 saniyede bir 10 saniye görünür
-    ffmpeg -re -i "$VIDEO_RAW" -i "reklam.png" \
+
+    # Eğer video linki alınamadıysa sıradakine geç
+    if [ -z "$VIDEO_RAW" ]; then
+      echo "Hata: Video linki alınamadı, atlanıyor."
+      continue
+    fi
+
+    # FFmpeg yayını başlat
+    ffmpeg -re -i "$VIDEO_RAW" -i "$BANNER_PATH" \
     -filter_complex "[0:v][1:v]overlay=0:0:enable='lt(mod(t,120),10)'[out]" \
     -map "[out]" -map 0:a \
-    -c:v libx264 -preset veryfast -b:v 3000k -maxrate 3000k -bufsize 6000k \
-    -pix_fmt yuv420p -g 60 -c:a aac -b:a 128k -ar 44100 \
+    -c:v libx264 -preset veryfast -b:v 2500k \
+    -c:a aac -b:a 128k -ar 44100 \
     -f flv "$RTMP_URL"
-  done
+
+  done < playlist.txt
 done
