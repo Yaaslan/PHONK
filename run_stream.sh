@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# YouTube Yayın Anahtarı (GitHub Secrets'tan otomatik gelir)
+# YouTube Yayın Anahtarı
 STREAM_KEY=$1
 RTMP_URL="rtmp://a.rtmp.youtube.com/live2/$STREAM_KEY"
 BANNER_PATH="reklam.png"
 
-# Senin Dropbox Linklerin (dl=1 olarak güncellendi)
+# Linkler temizlendi: Güvenlik tokenları (st) kaldırıldı ve raw=1 yapıldı
 URLS=(
-  "https://dl.dropboxusercontent.com/scl/fi/6e1zbol07nc2rczqih1qw/1.mp4?rlkey=lc632r4pe7f8zukk3u2szyb8o&st=jdhpzov0&raw=1"
-  "https://dl.dropboxusercontent.com/scl/fi/37m7kces06fpmf7sth9w1/2.mp4?rlkey=8jy8mjim6oaqnmivavtsgq1s0&st=pmm9ruxi&raw=1"
-  "https://dl.dropboxusercontent.com/scl/fi/b435jh25b1gtd5q5cjjak/3.mp4?rlkey=m1sy3trneot5cw0qjujmmga2a&st=6v8rb5y4&raw=1"
-  "https://dl.dropboxusercontent.com/scl/fi/eqm0hkcpw8jncseuv4cto/4.mp4?rlkey=r9d4co9rxow4rjv5jit1yt80a&st=3kse5uvr&raw=1"
+  "https://www.dropbox.com/scl/fi/6e1zbol07nc2rczqih1qw/1.mp4?rlkey=lc632r4pe7f8zukk3u2szyb8o&raw=1"
+  "https://www.dropbox.com/scl/fi/37m7kces06fpmf7sth9w1/2.mp4?rlkey=8jy8mjim6oaqnmivavtsgq1s0&raw=1"
+  "https://www.dropbox.com/scl/fi/b435jh25b1gtd5q5cjjak/3.mp4?rlkey=m1sy3trneot5cw0qjujmmga2a&raw=1"
+  "https://www.dropbox.com/scl/fi/eqm0hkcpw8jncseuv4cto/4.mp4?rlkey=r9d4co9rxow4rjv5jit1yt80a&raw=1"
 )
 
 while true; do
@@ -19,8 +19,7 @@ while true; do
     echo "SIGMA PHONK TV YAYINDA: $URL"
     echo "----------------------------------------"
 
-    # FFmpeg: Dropbox üzerinden doğrudan akış
-    # Banner her 2 dakikada bir 10 saniye görünür
+    # FFmpeg: Başına 'www' koyarak raw=1 ile doğrudan veri akışı
     ffmpeg -re -i "$URL" -i "$BANNER_PATH" \
     -filter_complex "[0:v][1:v]overlay=0:0:enable='lt(mod(t,120),10)'[out]" \
     -map "[out]" -map 0:a \
@@ -28,7 +27,7 @@ while true; do
     -pix_fmt yuv420p -g 60 -c:a aac -b:a 128k -ar 44100 \
     -f flv "$RTMP_URL"
     
-    echo "Video döngüsü tamamlandı, sıradakine geçiliyor..."
-    sleep 3
+    echo "Video bitti veya bağlantı koptu. 5 saniye sonra sıradakine geçiliyor..."
+    sleep 5
   done
 done
