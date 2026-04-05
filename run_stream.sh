@@ -7,10 +7,10 @@ BANNER_PATH="reklam.png"
 
 # Senin Dropbox Linklerin (dl=1 olarak güncellendi)
 URLS=(
-  "https://dl.dropboxusercontent.com/scl/fi/eqm0hkcpw8jncseuv4cto/1.mp4?rlkey=r9d4co9rxow4rjv5jit1yt80a&st=soxi4t4z&dl=1"
-  "https://dl.dropboxusercontent.com/scl/fi/b435jh25b1gtd5q5cjjak/2.mp4?rlkey=m1sy3trneot5cw0qjujmmga2a&st=wqy6ixu4&dl=1"
-  "https://dl.dropboxusercontent.com/scl/fi/6e1zbol07nc2rczqih1qw/4.mp4?rlkey=lc632r4pe7f8zukk3u2szyb8o&st=bh8ff08w&dl=1"
-  "https://dl.dropboxusercontent.com/scl/fi/37m7kces06fpmf7sth9w1/3.mp4?rlkey=8jy8mjim6oaqnmivavtsgq1s0&st=028kzsti&dl=1"
+  "https://dl.dropboxusercontent.com/scl/fi/6e1zbol07nc2rczqih1qw/1.mp4?rlkey=lc632r4pe7f8zukk3u2szyb8o&st=jdhpzov0&dl=1"
+  "https://dl.dropboxusercontent.com/scl/fi/37m7kces06fpmf7sth9w1/2.mp4?rlkey=8jy8mjim6oaqnmivavtsgq1s0&st=pmm9ruxi&dl=1"
+  "https://dl.dropboxusercontent.com/scl/fi/b435jh25b1gtd5q5cjjak/3.mp4?rlkey=m1sy3trneot5cw0qjujmmga2a&st=6v8rb5y4&dl=1"
+  "https://dl.dropboxusercontent.com/scl/fi/eqm0hkcpw8jncseuv4cto/4.mp4?rlkey=r9d4co9rxow4rjv5jit1yt80a&st=3kse5uvr&dl=1"
 )
 
 while true; do
