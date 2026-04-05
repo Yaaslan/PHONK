@@ -1,36 +1,30 @@
 #!/bin/bash
 
-# YouTube Yayın Anahtarı (GitHub Secret'tan gelen)
+# YouTube Yayın Anahtarı
 STREAM_KEY=$1
 RTMP_URL="rtmp://a.rtmp.youtube.com/live2/$STREAM_KEY"
 BANNER_PATH="reklam.png"
 
-# Sonsuz döngü başlat
+# LİNKLERİNİ BURAYA EKLE (Arada birer boşluk bırakarak)
+URLS=("BURAYA_BIRINCI_LINKI_YAPISTIR" "BURAYA_IKINCI_LINKI_YAPISTIR")
+
 while true; do
-  # playlist.txt dosyasını satır satır tara
-  while read -r raw_url; do
-    # Linkin etrafındaki boşlukları ve gizli Windows karakterlerini temizle
-    URL=$(echo "$raw_url" | tr -d '\r' | xargs)
-
-    # Eğer satır boşsa veya içinde "http" yoksa atla
-    if [[ -z "$URL" || "$URL" != http* ]]; then
-      continue
-    fi
-
-    echo "Sistem Hazırlanıyor... Oynatılacak Link: $URL"
+  for URL in "${URLS[@]}"; do
+    echo "----------------------------------------"
+    echo "SU AN YAYINLANAN: $URL"
+    echo "----------------------------------------"
     
     # yt-dlp ile ham video linkini al
     VIDEO_RAW=$(yt-dlp -f "best[ext=mp4]/best" -g "$URL")
 
-    # Eğer link boş döndüyse hata ver ve sıradakine geç
+    # Eğer link boşsa hata ver ve bekle
     if [ -z "$VIDEO_RAW" ]; then
-      echo "HATA: Video linki alınamadı: $URL"
+      echo "HATA: Link cekilemedi, 5 saniye sonra tekrar denenecek..."
+      sleep 5
       continue
     fi
 
-    echo "Yayın Başlatılıyor..."
-
-    # FFmpeg yayını ateşler
+    # FFmpeg yayını başlat
     ffmpeg -re -i "$VIDEO_RAW" -i "$BANNER_PATH" \
     -filter_complex "[0:v][1:v]overlay=0:0:enable='lt(mod(t,120),10)'[out]" \
     -map "[out]" -map 0:a \
@@ -38,11 +32,7 @@ while true; do
     -c:a aac -b:a 128k -ar 44100 \
     -f flv "$RTMP_URL"
 
-    echo "Video Bitti, Sıradakine Geçiliyor..."
-    sleep 2 # Geçişlerde 2 saniye bekleme
-
-  done < playlist.txt
-done
-
-  done < playlist.txt
+    echo "Video bitti, siradaki videoya geciliyor..."
+    sleep 2
+  done
 done
