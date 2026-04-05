@@ -1,0 +1,25 @@
+name: 7-24 Phonk TV Live
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Her 6 saatte bir yeniden başlat (Limit için)
+  workflow_dispatch:      # Manuel başlatma butonu
+
+jobs:
+  streaming:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu Cek
+        uses: actions/checkout@v4
+
+      - name: Aracları Kur (FFmpeg & yt-dlp)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+          sudo chmod a+rx /usr/local/bin/yt-dlp
+
+      - name: Yayini Baslat
+        run: bash run_stream.sh ${{ secrets.YOUTUBE_STREAM_KEY }}
+
+        
