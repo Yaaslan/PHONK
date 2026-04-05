@@ -1,38 +1,32 @@
 #!/bin/bash
 
-# YouTube Yayın Anahtarı
+# YouTube Yayın Anahtarı (GitHub Secrets'tan otomatik gelir)
 STREAM_KEY=$1
 RTMP_URL="rtmp://a.rtmp.youtube.com/live2/$STREAM_KEY"
 BANNER_PATH="reklam.png"
 
-# LİNKLERİNİ BURAYA EKLE (Arada birer boşluk bırakarak)
-URLS=("https://youtu.be/f_mGxEdvvLA?si=2MiVBeP0VVlxoOfF" "https://youtu.be/NY5DgRqfBCU?si=AYIsdqLB29DVbvIT")
+# Senin Dropbox Linklerin (dl=1 olarak güncellendi)
+URLS=(
+  "https://www.dropbox.com/scl/fi/eqm0hkcpw8jncseuv4cto/Video.Guru_20260405_013006229.mp4?rlkey=r9d4co9rxow4rjv5jit1yt80a&st=soxi4t4z&dl=1"
+  "https://www.dropbox.com/scl/fi/b435jh25b1gtd5q5cjjak/Video.Guru_20260405_013503897.mp4?rlkey=m1sy3trneot5cw0qjujmmga2a&st=wqy6ixu4&dl=1"
+)
 
 while true; do
   for URL in "${URLS[@]}"; do
     echo "----------------------------------------"
-    echo "SU AN YAYINLANAN: $URL"
+    echo "SIGMA PHONK TV YAYINDA: $URL"
     echo "----------------------------------------"
-    
-    # yt-dlp ile ham video linkini al
-    VIDEO_RAW=$(yt-dlp -f "best[ext=mp4]/best" -g "$URL")
 
-    # Eğer link boşsa hata ver ve bekle
-    if [ -z "$VIDEO_RAW" ]; then
-      echo "HATA: Link cekilemedi, 5 saniye sonra tekrar denenecek..."
-      sleep 5
-      continue
-    fi
-
-    # FFmpeg yayını başlat
-    ffmpeg -re -i "$VIDEO_RAW" -i "$BANNER_PATH" \
+    # FFmpeg: Dropbox üzerinden doğrudan akış
+    # Banner her 2 dakikada bir 10 saniye görünür
+    ffmpeg -re -i "$URL" -i "$BANNER_PATH" \
     -filter_complex "[0:v][1:v]overlay=0:0:enable='lt(mod(t,120),10)'[out]" \
     -map "[out]" -map 0:a \
-    -c:v libx264 -preset veryfast -b:v 2500k \
-    -c:a aac -b:a 128k -ar 44100 \
+    -c:v libx264 -preset veryfast -b:v 2500k -maxrate 2500k -bufsize 5000k \
+    -pix_fmt yuv420p -g 60 -c:a aac -b:a 128k -ar 44100 \
     -f flv "$RTMP_URL"
-
-    echo "Video bitti, siradaki videoya geciliyor..."
-    sleep 2
+    
+    echo "Video döngüsü tamamlandı, sıradakine geçiliyor..."
+    sleep 3
   done
 done
